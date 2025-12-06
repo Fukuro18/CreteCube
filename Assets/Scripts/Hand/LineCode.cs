@@ -20,9 +20,21 @@ public class LineCode : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        // Validate that references are assigned before using them
+        if (origin == null || destination == null)
+        {
+            Debug.LogWarning("LineCode: Origin or Destination not assigned in Inspector. Please assign both references.");
+            return;
+        }
+
+        if (lineRenderer == null)
+        {
+            Debug.LogWarning("LineCode: LineRenderer component not found.");
+            return;
+        }
+
         lineRenderer.SetPosition(0, origin.position);
         lineRenderer.SetPosition(1, destination.position);
         lineRenderer.SetColors(Color.red, Color.green);
-
     }
 }
