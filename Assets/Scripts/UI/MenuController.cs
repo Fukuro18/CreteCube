@@ -56,4 +56,17 @@ public class MenuController : MonoBehaviour
             Debug.LogError("No se encontró GameSceneManager en la escena.");
         }
     }
+
+    // Método para cargar la escena de Video
+    public void LoadVideoScene()
+    {
+        if (gameSceneManager != null)
+        {
+            gameSceneManager.LoadScene("Video");
+        }
+        else
+        {
+            Debug.LogError("No se encontró GameSceneManager en la escena.");
+        }
+    }
 }
