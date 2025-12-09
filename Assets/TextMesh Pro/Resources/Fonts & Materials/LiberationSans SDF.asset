@@ -13,6 +13,7 @@ Material:
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
   - OUTLINE_ON
+  - UNDERLAY_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
@@ -37,7 +38,7 @@ Material:
     - _MaskSoftnessX: 0
     - _MaskSoftnessY: 0
     - _OutlineSoftness: 0
-    - _OutlineWidth: 0.771
+    - _OutlineWidth: 0.617
     - _PerspectiveFilter: 0.176
     - _ScaleRatioA: 0.9
     - _ScaleRatioB: 1
@@ -64,7 +65,7 @@ Material:
     m_Colors:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _FaceColor: {r: 0, g: 0, b: 0, a: 0}
-    - _OutlineColor: {r: 0.98490566, g: 0.98490566, b: 0.98490566, a: 1}
+    - _OutlineColor: {r: 4.4939246, g: 4.4939246, b: 4.4939246, a: 1}
     - _UnderlayColor: {r: 0, g: 0, b: 0, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!114 &11400000
