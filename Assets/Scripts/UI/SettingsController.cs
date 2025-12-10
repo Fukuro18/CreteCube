@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class SettingsController : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class SettingsController : MonoBehaviour
 
     void Start()
     {
+        // LIMPIEZA TOTAL: Borrar cualquier conexión "fantasma" del Inspector (causa probable del bug)
+        volumeSlider.onValueChanged.RemoveAllListeners();
+        brightnessSlider.onValueChanged.RemoveAllListeners();
+
         // Cargar valores sin disparar eventos de guardado
         volumeSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("volume", 1f));
         brightnessSlider.SetValueWithoutNotify(PlayerPrefs.GetFloat("brightness", 1f));
@@ -19,6 +24,7 @@ public class SettingsController : MonoBehaviour
         ApplyVolume();
         ApplyBrightness();
 
+        // Conectar SOLO nuestras funciones
         volumeSlider.onValueChanged.AddListener(OnVolumeChange);
         brightnessSlider.onValueChanged.AddListener(OnBrightnessChange);
 
@@ -28,16 +34,13 @@ public class SettingsController : MonoBehaviour
     public void OnVolumeChange(float value)
     {
         if (isInitializing) return;
+        
+        // VALIDACIÓN ESTRICTA
+        if (!IsValidSender(volumeSlider.gameObject)) return;
+        
+        Debug.Log($"[Settings] Volume Changed to: {value}");
         ApplyVolume();
         PlayerPrefs.SetFloat("volume", value);
-        PlayerPrefs.Save();
-    }
-
-    public void OnBrightnessChange(float value)
-    {
-        if (isInitializing) return;
-        ApplyBrightness();
-        PlayerPrefs.SetFloat("brightness", value);
         PlayerPrefs.Save();
     }
 
@@ -46,55 +49,42 @@ public class SettingsController : MonoBehaviour
         AudioListener.volume = volumeSlider.value;
     }
 
+    public void OnBrightnessChange(float value)
+    {
+        if (isInitializing) return;
+
+        // VALIDACIÓN ESTRICTA
+        if (!IsValidSender(brightnessSlider.gameObject)) return;
+
+        Debug.Log($"[Settings] Brightness Changed to: {value}");
+        ApplyBrightness();
+        PlayerPrefs.SetFloat("brightness", value);
+        PlayerPrefs.Save();
+    }
+
     void ApplyBrightness()
     {
-        float brightness = brightnessSlider.value;
-        
-        // 1. RenderSettings para objetos 3D
-        RenderSettings.ambientLight = Color.white * brightness;
-
-        // 2. Overlay para UI (Simular brillo reduciendo opacidad de un panel negro)
-        // Lógica duplicada localmente para garantizar Feedback en Tiempo Real en el menú de ajustes
-        GameObject overlayObj = GameObject.Find("BrightnessOverlayCanvas");
-        if (overlayObj == null)
-        {
-            overlayObj = new GameObject("BrightnessOverlayCanvas");
-            Canvas canvas = overlayObj.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.sortingOrder = 32767; // Encima de todo
-            DontDestroyOnLoad(overlayObj);
-
-            overlayObj.AddComponent<UnityEngine.UI.CanvasScaler>();
-            overlayObj.AddComponent<UnityEngine.UI.GraphicRaycaster>().blockingObjects = UnityEngine.UI.GraphicRaycaster.BlockingObjects.None; 
-
-            GameObject panelObj = new GameObject("DarknessPanel");
-            panelObj.transform.SetParent(overlayObj.transform, false);
-            UnityEngine.UI.Image img = panelObj.AddComponent<UnityEngine.UI.Image>();
-            img.color = Color.black;
-            img.raycastTarget = false; 
-
-            RectTransform rect = img.GetComponent<RectTransform>();
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
-            rect.offsetMin = Vector2.zero;
-            rect.offsetMax = Vector2.zero;
-        }
-
-        Transform panel = overlayObj.transform.Find("DarknessPanel");
-        if (panel != null)
-        {
-            UnityEngine.UI.Image overlayImage = panel.GetComponent<UnityEngine.UI.Image>();
-            if (overlayImage != null)
-            {
-                float alpha = 1.0f - brightness; 
-                alpha = Mathf.Clamp(alpha, 0f, 0.9f);
-                overlayImage.color = new Color(0, 0, 0, alpha);
-            }
-        }
+        // Delegar al Manager centralizado
+        BrightnessManager.SetBrightness(brightnessSlider.value);
     }
 
     public void GoBack()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    // Verifica si el objeto seleccionado actualmente es el que esperamos
+    private bool IsValidSender(GameObject expectedSender)
+    {
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
+        if (selected == null) return true;
+
+        if (selected != expectedSender && (selected == volumeSlider.gameObject || selected == brightnessSlider.gameObject))
+        {
+            Debug.LogError($"[Settings] BLOCKED CROSS-TALK: Event from {expectedSender.name} triggered while selecting {selected.name}");
+            return false;
+        }
+
+        return true;
     }
 }
