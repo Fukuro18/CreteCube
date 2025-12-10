@@ -9,7 +9,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public Color darkOrange = new Color(1f, 0.459f, 0.078f); // #ff7514
 
     // Colores base
-    public Color normalBgColor = new Color(0f, 0f, 0f, 0.3f); // Fondo oscuro normal
+    public Color normalBgColor = new Color(0f, 0f, 0f, 0f); // Transparente
     public Color normalTextColor = new Color(1f, 1f, 1f, 0.85f); // Texto blanco claro
     public Color highlightTextColor = new Color(1f, 1f, 1f, 1f); // Texto blanco brillante
 
@@ -31,7 +31,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     void Start()
     {
-        CreateGradientTexture();
+        // CreateGradientTexture();
         InitializeComponents();
         originalScale = transform.localScale;
     }
@@ -73,7 +73,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
         if (bgObject == null)
         {
-            CreateBackground();
+            // CreateBackground();
         }
         else
         {
@@ -91,7 +91,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
             outlineEffect = textObject.GetComponent<Outline>();
         }
 
-        CreateGlowOverlay();
+        // CreateGlowOverlay();
     }
 
     private void CreateBackground()
@@ -144,10 +144,10 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * scaleSpeed);
 
         // Animación del degradado
-        float targetAlpha = isHovered ? 1f : 0f;
-        Color currentColor = glowOverlayImage.color;
-        currentColor.a = Mathf.Lerp(currentColor.a, targetAlpha, Time.deltaTime * fadeSpeed);
-        glowOverlayImage.color = currentColor;
+        // float targetAlpha = isHovered ? 1f : 0f;
+        // Color currentColor = glowOverlayImage.color;
+        // currentColor.a = Mathf.Lerp(currentColor.a, targetAlpha, Time.deltaTime * fadeSpeed);
+        // glowOverlayImage.color = currentColor;
 
         // Animación del texto
         if (isHovered)
@@ -169,6 +169,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
 
         // Efecto de brillo adicional en el fondo base durante hover
+        /*
         if (bgImage != null)
         {
             Color bgTarget = isHovered ?
@@ -176,6 +177,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
                 normalBgColor;
             bgImage.color = Color.Lerp(bgImage.color, bgTarget, Time.deltaTime * fadeSpeed);
         }
+        */
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -222,7 +224,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // Opcional: cambiar color al presionar
         if (bgImage != null)
         {
-            bgImage.color = new Color(darkOrange.r, darkOrange.g, darkOrange.b, 0.7f);
+            // bgImage.color = new Color(darkOrange.r, darkOrange.g, darkOrange.b, 0.7f);
         }
     }
 
@@ -232,7 +234,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // Volver al estado hover o normal
         if (bgImage != null)
         {
-            bgImage.color = isHovered ? darkOrange : normalBgColor;
+            // bgImage.color = isHovered ? darkOrange : normalBgColor;
         }
     }
 }
