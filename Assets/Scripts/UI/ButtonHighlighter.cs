@@ -137,7 +137,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     void Update()
     {
-        if (buttonText == null) return;
+        // if (buttonText == null) return;
 
         // Animación de escala suave
         Vector3 targetScale = isHovered ? originalScale * 1.05f : originalScale;
@@ -150,7 +150,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // glowOverlayImage.color = currentColor;
 
         // Animación del texto
-        if (isHovered)
+        if (isHovered && buttonText != null)
         {
             buttonText.color = Color.Lerp(buttonText.color, highlightTextColor, Time.deltaTime * fadeSpeed);
             if (outlineEffect != null)
