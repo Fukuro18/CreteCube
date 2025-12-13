@@ -5,7 +5,7 @@ using UnityEngine;
 public class Automate : MonoBehaviour
 {
 
-    public static List<string> movelist = new List<string>() { };
+    public List<string> movelist = new List<string>() { };
     private readonly List<string> allMoves = new List<string>() { "U", "U'", "U2", "D", "D'", "D2", "L", "L'", "L2", "R", "R'", "R2", "F", "F'", "F2", "B", "B'", "B2" };
     private CubeState cubeState;
     // Start is called before the first frame update

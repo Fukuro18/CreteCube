@@ -49,8 +49,8 @@ public class ReadCube : MonoBehaviour
 
     public void ReadState()
     {
-        cubeState = FindObjectOfType<CubeState>();
-        cubeMap = FindObjectOfType<CubeMap>();
+        // usage of cached cubeState and cubeMap from Start()
+
 
         // set the state of each position in the list of sides so we know
         // what color is in what position

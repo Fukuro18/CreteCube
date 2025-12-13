@@ -8,12 +8,14 @@ public class SolveTwoPhase : MonoBehaviour
 
     public ReadCube readCube;
     public CubeState cubeState;
+    public Automate automate;
 
     // Start is called before the first frame update
     void Start()
     {
         readCube = FindObjectOfType<ReadCube>();
         cubeState = FindObjectOfType<CubeState>();
+        automate = FindObjectOfType<Automate>();
     }
 
     // Update is called once per frame
@@ -62,7 +64,7 @@ public class SolveTwoPhase : MonoBehaviour
         List<string> solutionList = StringToList(solution);
 
         //Automate the list
-        Automate.movelist = solutionList;
+        automate.movelist = solutionList;
 
         print(info);
 

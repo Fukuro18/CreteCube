@@ -21,15 +21,41 @@ public class SelectFace : MonoBehaviour
         cubeState = FindObjectOfType<CubeState>();
     }
 
+    private Camera _mainCamera;
+    Camera MainCamera
+    {
+        get
+        {
+            if (_mainCamera == null)
+            {
+                _mainCamera = Camera.main;
+                if (_mainCamera == null)
+                {
+                    _mainCamera = FindObjectOfType<Camera>();
+                }
+            }
+            return _mainCamera;
+        }
+    }
+
     void Update()
     {
         if (Input.GetMouseButtonDown(0))
         {
+            // Block click if over UI
+            if (UnityEngine.EventSystems.EventSystem.current != null && 
+                UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
+
             mouseDownPos = Input.mousePosition;
 
             // Raycast to find the initial face
             RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (MainCamera == null) return;
+            
+            Ray ray = MainCamera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out hit, 100.0f, layerMask))
             {
                 currentFace = hit.collider.gameObject;
@@ -112,8 +138,9 @@ public class SelectFace : MonoBehaviour
         Vector3 localX = face.transform.right;
 
         // Project these to screen space
-        Vector3 screenY = Camera.main.WorldToScreenPoint(face.transform.position + localY) - Camera.main.WorldToScreenPoint(face.transform.position);
-        Vector3 screenX = Camera.main.WorldToScreenPoint(face.transform.position + localX) - Camera.main.WorldToScreenPoint(face.transform.position);
+        if (MainCamera == null) return;
+        Vector3 screenY = MainCamera.WorldToScreenPoint(face.transform.position + localY) - MainCamera.WorldToScreenPoint(face.transform.position);
+        Vector3 screenX = MainCamera.WorldToScreenPoint(face.transform.position + localX) - MainCamera.WorldToScreenPoint(face.transform.position);
 
         // Normalize for direction comparison
         Vector2 dragDir = new Vector2(dragVector.x, dragVector.y).normalized;

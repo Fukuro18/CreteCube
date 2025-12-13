@@ -8,9 +8,10 @@ public class HandInteractionManager : MonoBehaviour
     public HandTracking handTracking;
 
     [Header("Gesture Detection Settings")]
-    public float pinchThreshold = 0.1f; // Distance threshold for pinch gesture
-    public float pinchHoldTime = 0.2f;  // Time to hold pinch before triggering
-    public float palmOpenThreshold = 0.3f; // Minimum distance between fingers for open palm
+    [Header("Gesture Detection Settings")]
+    public float pinchThreshold = 0.5f; // Increased from 0.1 to 0.5 for easier clicking
+    public float pinchHoldTime = 0.1f;  // Decreased from 0.2 to 0.1 for snappier clicks
+    public float palmOpenThreshold = 0.7f; // Adjusted relative to pinch threshold
 
     [Header("Interaction States")]
     public bool isPinching = false;

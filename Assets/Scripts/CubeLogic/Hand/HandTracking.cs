@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Globalization;
 
 public class HandTracking : MonoBehaviour
 {
@@ -51,9 +52,9 @@ public class HandTracking : MonoBehaviour
 
             try
             {
-                float x = 10 - float.Parse(points[i * 3]) / 90f;
-                float y = float.Parse(points[i * 3 + 1]) / 90f;
-                float z = float.Parse(points[i * 3 + 2]) / 90f;
+                float x = 10 - float.Parse(points[i * 3], CultureInfo.InvariantCulture) / 90f;
+                float y = float.Parse(points[i * 3 + 1], CultureInfo.InvariantCulture) / 90f;
+                float z = float.Parse(points[i * 3 + 2], CultureInfo.InvariantCulture) / 90f;
 
                 handPoints[i].transform.localPosition = new Vector3(x, y, z);
             }

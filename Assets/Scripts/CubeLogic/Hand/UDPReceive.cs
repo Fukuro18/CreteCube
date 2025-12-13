@@ -36,13 +36,19 @@ public class UDPReceive : MonoBehaviour
                 IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
                 byte[] dataByte = client.Receive(ref anyIP);
                 data = Encoding.UTF8.GetString(dataByte);
-
-                if (printToConsole) { print(data); }
             }
             catch (Exception err)
             {
-                print(err.ToString());
+                Debug.LogError(err.ToString());
             }
+        }
+    }
+
+    void Update()
+    {
+        if (printToConsole && !string.IsNullOrEmpty(data))
+        {
+            print(data);
         }
     }
 }

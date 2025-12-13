@@ -44,4 +44,18 @@ public class PlayButton : MonoBehaviour
             Debug.LogError("No se encontró GameSceneManager en la escena. Asegúrate de que existe un objeto con este script.");
         }
     }
+
+     public void Press()
+    {
+        Debug.Log($"Botón PLAY presionado. Intentando cargar escena '{sceneToLoad}'...");
+
+        GameSceneManager sceneManager = FindObjectOfType<GameSceneManager>();
+
+        if (sceneManager != null)
+            sceneManager.LoadScene(sceneToLoad);
+        else
+            Debug.LogError("No se encontró GameSceneManager en la escena.");
+    }
+
+
 }
