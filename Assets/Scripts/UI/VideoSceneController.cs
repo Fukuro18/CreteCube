@@ -11,6 +11,25 @@ public class VideoSceneController : MonoBehaviour
 
     void Start()
     {
+        // Asegurar que el volumen se aplique al cargar la escena de Video
+        float volume = PlayerPrefs.GetFloat("volume", 1f);
+        AudioListener.volume = volume;
+
+        // Búsqueda robusta de VideoPlayer para forzar el volumen
+        UnityEngine.Video.VideoPlayer[] players = FindObjectsOfType<UnityEngine.Video.VideoPlayer>();
+        foreach (var player in players)
+        {
+            if (player.audioOutputMode == UnityEngine.Video.VideoAudioOutputMode.Direct)
+            {
+                player.SetDirectAudioVolume(0, volume);
+            }
+            else if (player.audioOutputMode == UnityEngine.Video.VideoAudioOutputMode.AudioSource)
+            {
+                AudioSource source = player.GetComponent<AudioSource>();
+                if (source != null) source.volume = volume;
+            }
+        }
+
         // Si no se asignó en el Inspector, intentar encontrarlo en la escena
         if (gameSceneManager == null)
         {
@@ -19,6 +38,34 @@ public class VideoSceneController : MonoBehaviour
             if (gameSceneManager == null)
             {
                 Debug.LogError("No se encontró GameSceneManager en la escena Video. Asegúrate de agregarlo al GameObject.");
+            }
+        }
+    }
+
+    void Update()
+    {
+        // Enfoque "Fuerza Bruta": Asegurar que el volumen se respete siempre, incluso si el video carga tarde
+        // Esto es muy útil si el VideoPlayer se inicializa asíncronamente
+        float targetVolume = AudioListener.volume;
+        
+        UnityEngine.Video.VideoPlayer[] players = FindObjectsOfType<UnityEngine.Video.VideoPlayer>();
+        foreach (var player in players)
+        {
+            if (player.audioOutputMode == UnityEngine.Video.VideoAudioOutputMode.Direct)
+            {
+                // Solo asignar si es diferente para no spammear el setter
+                if (player.GetDirectAudioVolume(0) != targetVolume)
+                {
+                    player.SetDirectAudioVolume(0, targetVolume);
+                }
+            }
+            else if (player.audioOutputMode == UnityEngine.Video.VideoAudioOutputMode.AudioSource)
+            {
+                AudioSource source = player.GetComponent<AudioSource>();
+                if (source != null && source.volume != targetVolume) 
+                {
+                    source.volume = targetVolume;
+                }
             }
         }
     }
