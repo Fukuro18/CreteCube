@@ -68,7 +68,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private void InitializeComponents()
     {
         // Buscar componentes existentes
-        bgObject = transform.Find("ButtonBG")?.gameObject;
+       /* bgObject = transform.Find("ButtonBG")?.gameObject;
         textObject = transform.Find("Text")?.gameObject;
 
         if (bgObject == null)
@@ -89,10 +89,21 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         {
             buttonText = textObject.GetComponent<TextMeshProUGUI>();
             outlineEffect = textObject.GetComponent<Outline>();
-        }
+        }*/
 
         // CreateGlowOverlay();
+
+    bgImage = GetComponentInChildren<Image>();
+
+    buttonText = GetComponentInChildren<TextMeshProUGUI>();
+    outlineEffect = buttonText != null ? buttonText.GetComponent<Outline>() : null;
+
+    if (buttonText == null)
+    {
+        Debug.LogWarning($"[ButtonHighlighter] No se encontró TextMeshProUGUI en {gameObject.name}");
     }
+}
+
 
     private void CreateBackground()
     {
@@ -140,7 +151,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // if (buttonText == null) return;
 
         // Animación de escala suave
-        Vector3 targetScale = isHovered ? originalScale * 1.05f : originalScale;
+        /*Vector3 targetScale = isHovered ? originalScale * 1.05f : originalScale;
         transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * scaleSpeed);
 
         // Animación del degradado
@@ -169,7 +180,7 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
         }
 
         // Efecto de brillo adicional en el fondo base durante hover
-        /*
+        
         if (bgImage != null)
         {
             Color bgTarget = isHovered ?
@@ -178,7 +189,35 @@ public class ButtonHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerEx
             bgImage.color = Color.Lerp(bgImage.color, bgTarget, Time.deltaTime * fadeSpeed);
         }
         */
+
+        
+    Vector3 targetScale = isHovered ? originalScale * 1.05f : originalScale;
+    transform.localScale = Vector3.Lerp(transform.localScale, targetScale, Time.deltaTime * scaleSpeed);
+
+    // 🔒 PROTECCIÓN CLAVE
+    if (buttonText == null) return;
+
+    if (isHovered)
+    {
+        buttonText.color = Color.Lerp(buttonText.color, highlightTextColor, Time.deltaTime * fadeSpeed);
+
+        if (outlineEffect != null)
+        {
+            outlineEffect.enabled = true;
+            outlineEffect.effectColor = new Color(0f, 0f, 0f, 1f);
+        }
     }
+    else
+    {
+        buttonText.color = Color.Lerp(buttonText.color, normalTextColor, Time.deltaTime * fadeSpeed);
+
+        if (outlineEffect != null)
+        {
+            outlineEffect.effectColor = new Color(0f, 0f, 0f, 0.8f);
+        }
+    }
+}
+
 
     public void OnPointerEnter(PointerEventData eventData)
     {

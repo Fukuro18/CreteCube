@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine;
 using System;
 using System.Text;
@@ -13,42 +10,72 @@ public class UDPReceive : MonoBehaviour
     Thread receiveThread;
     UdpClient client;
     public int port = 5052;
-    public bool startRecieving = true;
+
     public bool printToConsole = false;
     public string data;
 
-    public void Start()
+    private bool isRunning = false;
+
+    void Start()
     {
-        receiveThread = new Thread(
-            new ThreadStart(ReceiveData));
+        isRunning = true;
+        receiveThread = new Thread(ReceiveData);
         receiveThread.IsBackground = true;
         receiveThread.Start();
     }
 
-    // receive thread
-    private void ReceiveData()
+    void ReceiveData()
     {
-        client = new UdpClient(port);
-        while (startRecieving)
+        try
         {
-            try
+            client = new UdpClient(port);
+            client.Client.ReceiveTimeout = 1000; // 1 segundo
+
+            IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
+
+            while (isRunning)
             {
-                IPEndPoint anyIP = new IPEndPoint(IPAddress.Any, 0);
-                byte[] dataByte = client.Receive(ref anyIP);
-                data = Encoding.UTF8.GetString(dataByte);
-            }
-            catch (Exception err)
-            {
-                Debug.LogError(err.ToString());
+                try
+                {
+                    byte[] dataByte = client.Receive(ref anyIP);
+                    data = Encoding.UTF8.GetString(dataByte);
+                }
+                catch (SocketException)
+                {
+                    // Timeout normal, permite revisar isRunning
+                }
             }
         }
+        catch (Exception e)
+        {
+            Debug.LogWarning("UDP detenido: " + e.Message);
+        }
+        finally
+        {
+            if (client != null)
+            {
+                client.Close();
+                client = null;
+            }
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        isRunning = false;
+    }
+
+    void OnDisable()
+    {
+        isRunning = false;
     }
 
     void Update()
     {
         if (printToConsole && !string.IsNullOrEmpty(data))
         {
-            print(data);
+            Debug.Log(data);
+            data = null;
         }
     }
 }
